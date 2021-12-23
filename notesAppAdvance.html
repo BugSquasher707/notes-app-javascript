@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+
+    <link rel="stylesheet" href="./notesAppAdvance.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script src="https://kit.fontawesome.com/164bd13fb2.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    
+    <button class="add" id="add">
+        <i class="fas fa-plus"></i> Add Notes
+    </button>
+
+</body>
+
+<script>
+
+    var addBtn = document.getElementById('add')
+    
+    const notes= JSON.parse(localStorage.getItem('notes'))
+
+    if(notes){
+        notes.forEach(note => {
+            addNewNotes(note)
+        });
+    }
+
+    addBtn.addEventListener('click', () => {
+        addNewNotes();
+    })
+
+    function addNewNotes(text=''){
+        const noteBook = document.createElement('div')
+        noteBook.className = 'note'
+        noteBook.innerHTML = `
+        
+        <div class = 'tools'>
+        
+            <button class = 'edit'> <i class = 'fas fa-edit'></i> </button>
+            <button class = 'delete'> <i class = 'fas fa-trash-alt'></i> </button>
+
+        </div>
+
+        <div class = 'main ${text ? "" : "hidden"}'></div>
+        <textarea class = ${text ? "hidden" : ""}></textarea>
+        
+        `
+        var editBtn = noteBook.querySelector('.edit');
+        var deleteBtn = noteBook.querySelector('.delete');
+
+        const main = noteBook.querySelector('.main');
+        const textarea = noteBook.querySelector('textarea');
+
+        textarea.value = text
+        main.innerHTML = text
+
+        editBtn.onclick = () =>{
+            main.classList.toggle('hidden')
+            textarea.classList.toggle('hidden')
+        }
+
+        deleteBtn.onclick = () => {
+            noteBook.remove()
+            updateList()
+        }
+
+        textarea.oninput = (e) => {
+
+            //to get value of TextArea
+
+            //1st Method
+
+            //const value = e.target.value
+            
+            //2nd Method
+
+            //{value} "This is destructuring mostly used in react.js"
+
+            const {value} = e.target
+            main.innerHTML = value
+            updateList()
+        }
+
+        document.body.appendChild(noteBook);
+    }
+
+    function updateList(){
+        const notesText = document.querySelectorAll('textarea')
+
+        const notes = []
+
+        notesText.forEach((note) => {
+            notes.push(note.value)
+        })
+
+        localStorage.setItem('notes', JSON.stringify(notes))
+    }
+
+</script>
+
+</html>
